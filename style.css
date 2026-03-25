@@ -4,7 +4,7 @@ body {
     background: #f5f5f5;
 }
 
-/* HEADER */
+
 header {
     display: flex;
     justify-content: space-between;
@@ -16,10 +16,13 @@ header {
     
     
 }
+#Roffa {
+    text-align: center;
+    width: 100%; 
+}
 
 
 
-/* FOTO BLOK */
 .foto {
     width: 80%;
     margin: 20px auto;
