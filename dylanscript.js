@@ -1,170 +1,169 @@
 const quiz = [
 {
 type: "mc",
-question: "Waar denk jij dat huizen het duurst zijn?",
-answers: [
-"In grote steden",
-"In dorpen",
-"Aan de rand van steden",
-"Overal ongeveer hetzelfde"
-]
+question: "Waar zijn huizen het duurst?",
+answers: ["In grote steden","In dorpen","Aan de rand","Overal hetzelfde"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Zou jij later een appartement willen?",
-answers: ["Ja","Nee","Misschien"]
+question: "Wat bepaalt vaak de prijs van een huis?",
+answers: ["Kleur","Locatie","Aantal ramen","Deur"],
+correct: 1
 },
-
 {
 type: "mc",
-question: "Hoe belangrijk is een tuin voor jou?",
-answers: [
-"Heel belangrijk",
-"Best belangrijk",
-"Niet zo belangrijk",
-"Helemaal niet belangrijk"
-]
+question: "Waarom stijgen huizenprijzen?",
+answers: ["Meer vraag dan aanbod","Meer regen","Meer auto's","Internet"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Zou je in een klein appartement wonen als het betaalbaar is?",
-answers: ["Ja","Nee","Misschien"]
+question: "Wat is een hypotheek?",
+answers: ["Een lening voor een huis","Een baan","Een verzekering","Een contract"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Hoe lang denk je dat jongeren moeten sparen voor een huis?",
-answers: [
-"1–5 jaar",
-"5–10 jaar",
-"10–15 jaar",
-"Meer dan 15 jaar"
-]
+question: "Wat betekent huur?",
+answers: ["Je koopt een huis","Je leent een huis tegen betaling","Gratis wonen","Ruilen"],
+correct: 1
 },
-
 {
 type: "mc",
-question: "Zou jij samen met vrienden een huis huren?",
-answers: ["Ja","Nee","Misschien"]
+question: "Waarom wonen mensen in steden?",
+answers: ["Werk en voorzieningen","Rust","Geen reden","Goedkoper"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Wat vind je belangrijker bij een huis?",
-answers: [
-"Lage prijs",
-"Grootte",
-"Locatie",
-"Nieuwe woning"
-]
+question: "Wat is sociale huur?",
+answers: ["Dure huur","Goedkope huur via overheid","Koophuis","Vakantiehuis"],
+correct: 1
 },
-
 {
 type: "mc",
-question: "Denk je dat er genoeg huizen worden gebouwd?",
-answers: ["Ja","Nee","Weet ik niet"]
+question: "Wat is belangrijk bij een huis?",
+answers: ["Locatie","Kleur","Dakvorm","Aantal stoelen"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Zou je verder van de stad wonen als het goedkoper is?",
-answers: ["Ja","Nee","Misschien"]
+question: "Wat gebeurt bij woningtekort?",
+answers: ["Prijs daalt","Prijs stijgt","Niks","Huizen verdwijnen"],
+correct: 1
 },
-
 {
 type: "mc",
-question: "Denk je dat huizenprijzen blijven stijgen?",
-answers: ["Ja","Nee","Weet ik niet"]
+question: "Wat is nieuwbouw?",
+answers: ["Oude huizen","Nieuwe huizen","Kapotte huizen","Geen idee"],
+correct: 1
 },
 
-{
-type: "open",
-question: "Waarom denk je dat huizen zo duur zijn geworden?"
-},
-
-{
-type: "open",
-question: "Wat zou jij doen als je geen huis kunt vinden?"
-},
-
-{
-type: "open",
-question: "Wat voor huis zou jij het liefst willen hebben?"
-},
-
-{
-type: "open",
-question: "In welke stad of regio zou jij later willen wonen?"
-},
-
-{
-type: "open",
-question: "Wat vind jij het grootste probleem van de huizenmarkt?"
-}
-
+// open vragen
+{type:"open",question:"Waarom zijn huizen duur?"},
+{type:"open",question:"Wat zou jij doen zonder huis?"},
+{type:"open",question:"Wat is jouw droomhuis?"},
+{type:"open",question:"Waar wil je wonen later?"},
+{type:"open",question:"Wat is het grootste probleem?"}
 ];
 
 let current = 0;
+let answersUser = new Array(quiz.length).fill(null);
 
 const questionBox = document.getElementById("questionBox");
+const progressBar = document.getElementById("progress");
+
+// click lock zodat je 2x niet dubbel telt
+let clickLocked = false;
 
 function loadQuestion(){
-
+clickLocked = false;
 const q = quiz[current];
 
-let html = "<div class='question'><h3>"+(current+1)+". "+q.question+"</h3>";
+updateProgress();
+
+let html = `<div class='question'>
+<h3>${current+1}. ${q.question}</h3>`;
 
 if(q.type === "mc"){
-
 html += "<div class='answers'>";
-
-q.answers.forEach(a => {
-
-html += "<button>"+a+"</button>";
-
+q.answers.forEach((a,i)=>{
+let selected = answersUser[current] === i ? "selected" : "";
+html += `<button class="${selected}" onclick="selectAnswer(${i})">${a}</button>`;
 });
-
 html += "</div>";
-
 }
 
 if(q.type === "open"){
-
-html += "<textarea placeholder='Typ hier je antwoord'></textarea>";
-
+let val = answersUser[current] || "";
+html += `<textarea id="openAnswer">${val}</textarea>`;
 }
 
 html += "</div>";
 
 questionBox.innerHTML = html;
+}
 
+function selectAnswer(i){
+if(clickLocked) return; // voorkomt dubbele score
+clickLocked = true;
+
+answersUser[current] = i;
+
+// automatische doorgang bij 2x click
+setTimeout(()=>{
+if(current < quiz.length-1){
+current++;
+loadQuestion();
+} else {
+showResult();
+}
+}, 200);
+loadQuestion();
 }
 
 document.getElementById("next").onclick = () => {
-
-if(current < quiz.length-1){
-
-current++;
-
-loadQuestion();
-
+if(quiz[current].type === "open"){
+answersUser[current] = document.getElementById("openAnswer").value;
 }
-
+if(current < quiz.length-1){
+current++;
+loadQuestion();
+} else {
+showResult();
+}
 };
 
 document.getElementById("prev").onclick = () => {
-
 if(current > 0){
-
 current--;
-
 loadQuestion();
-
 }
-
 };
 
-loadQuestion();
+function updateProgress(){
+let percent = ((current+1) / quiz.length) * 100;
+progressBar.style.width = percent + "%";
+}
 
+function showResult(){
+let score = 0;
+
+quiz.forEach((q,i)=>{
+if(q.type === "mc" && answersUser[i] === q.correct){
+score++;
+}
+});
+
+let fouten = 10 - score;
+
+questionBox.innerHTML = `
+<div class="result">
+<h2>Klaar!</h2>
+<p>Je hebt ${fouten} van de 15 fout</p>
+<p>Score: ${score}/10 goed</p>
+</div>`;
+}
+
+loadQuestion();

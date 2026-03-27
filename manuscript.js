@@ -1,170 +1,167 @@
 const quiz = [
 {
 type: "mc",
-question: "Hoe denk jij over de huizenmarkt in Nederland?",
-answers: [
-"Goed",
-"Best goed",
-"Moeilijk",
-"Heel moeilijk"
-]
+question: "Wat is het grootste probleem van de woningmarkt?",
+answers: ["Te weinig huizen","Te veel huizen","Te goedkoop","Geen vraag"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Zou jij later een appartement willen?",
-answers: ["Ja","Nee","Misschien"]
+question: "Wat betekent hypotheekrente?",
+answers: ["Kosten voor geleend geld","Prijs van huis","Belasting","Verzekering"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Wat denk je dat het grootste probleem is op de huizenmarkt?",
-answers: [
-"Huizen zijn te duur",
-"Te weinig huizen",
-"Hypotheek krijgen is moeilijk",
-"Anders"
-]
+question: "Wat is sociale huur?",
+answers: ["Betaalbare huur via overheid","Dure huur","Vakantiehuis","Appartement kopen"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Zou jij binnen 5 jaar liever een huis kopen of huren? ",
-answers: ["Kopen","Huren","Maakt mij niet uit"]
+question: "Wat is een vrije sector woning?",
+answers: ["Huurwoning zonder prijsplafond","Koophuis","Overheidswoning","Appartement in flat"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Vanaf welke leeftijd denk je dat mensen een huis kunnen kopen?",
-answers: [
-"18–21 jaar",
-"22–25 jaar",
-"26–30 jaar",
-"30+"
-]
+question: "Wat is belangrijk bij het kopen van een huis?",
+answers: ["Ligging","Aantal ramen","Kleur","Aantal deuren"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Zou jij samen met vrienden een huis huren?",
-answers: ["Ja","Nee","Misschien"]
+question: "Wat is een energielabel?",
+answers: ["Hoe energiezuinig het huis is","Hoe groot het huis is","Prijs van huis","Bouwjaar"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Waar zou jij later het liefst wonen? ",
-answers: [
-"Grote Stad",
-"Middelgrote stad",
-"Dorp",
-"Maakt mij niet uit"
-]
+question: "Wat doet een makelaar?",
+answers: ["Huizen verkopen of verhuren","Schilderen","Bouwen","Verzekeren"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Zou je samen met iemand een huis kopen? ",
-answers: ["Ja","Nee","Misschien"]
+question: "Waarom kiezen mensen voor nieuwbouw?",
+answers: ["Modern en energiebesparend","Ouderwets","Duurder","Meer onderhoud nodig"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Denk je dat sparen voor een huis moeilijk is voor jongeren? ",
-answers: ["Ja","Nee","Een beetje"]
+question: "Wat gebeurt bij woningtekort?",
+answers: ["Prijs stijgt","Prijs daalt","Huizen verdwijnen","Niks"],
+correct: 0
 },
-
 {
 type: "mc",
-question: "Hoe belangrijk vind jij het om later een eigen huis te hebben?",
-answers: ["Heel belangrijk","Best belangrijk","Niet zo belangrijk", "Helemaal niet belangrijk"]
+question: "Wat is het voordeel van huren t.o.v kopen?",
+answers: ["Flexibiliteit","Goedkoper","Eigen tuin","Geen buren"],
+correct: 0
 },
-
-{
-type: "open",
-question: "Wat vind jij het grootste probleem op de huizenmarkt voor jongeren?"
-},
-
-{
-type: "open",
-question: "Denk je dat jongeren genoeg informatie krijgen over het kopen van een huis?"
-},
-
-{
-type: "open",
-question: "Hoeveel geld denk je dat een huis gemiddeld kost in Nederland?"
-},
-
-{
-type: "open",
-question: "Zou je liever in een stad of dorp wonen? Waarom?"
-},
-
-{
-type: "open",
-question: "Wat denk je dat er in de toekomst gaat gebeuren met de huizenprijzen?"
-}
-
+{type:"open",question:"Wat is jouw droomhuis?"},
+{type:"open",question:"In welke buurt zou jij willen wonen?"},
+{type:"open",question:"Wat vind jij belangrijk bij een huis?"},
+{type:"open",question:"Zou jij later huren of kopen?"},
+{type:"open",question:"Wat vind jij van huizenprijzen vandaag?"}
 ];
 
 let current = 0;
+let answersUser = new Array(quiz.length).fill(null);
 
 const questionBox = document.getElementById("questionBox");
+const progressBar = document.getElementById("progress");
+
+// click lock zodat je 2x niet dubbel telt
+let clickLocked = false;
 
 function loadQuestion(){
-
+clickLocked = false;
 const q = quiz[current];
 
-let html = "<div class='question'><h3>"+(current+1)+". "+q.question+"</h3>";
+updateProgress();
+
+let html = `<div class='question'>
+<h3>${current+1}. ${q.question}</h3>`;
 
 if(q.type === "mc"){
-
 html += "<div class='answers'>";
-
-q.answers.forEach(a => {
-
-html += "<button>"+a+"</button>";
-
+q.answers.forEach((a,i)=>{
+let selected = answersUser[current] === i ? "selected" : "";
+html += `<button class="${selected}" onclick="selectAnswer(${i})">${a}</button>`;
 });
-
 html += "</div>";
-
 }
 
 if(q.type === "open"){
-
-html += "<textarea placeholder='Typ hier je antwoord'></textarea>";
-
+let val = answersUser[current] || "";
+html += `<textarea id="openAnswer">${val}</textarea>`;
 }
 
 html += "</div>";
 
 questionBox.innerHTML = html;
+}
 
+function selectAnswer(i){
+if(clickLocked) return; // voorkomt dubbele score
+clickLocked = true;
+
+answersUser[current] = i;
+
+// automatische doorgang bij 2x click
+setTimeout(()=>{
+if(current < quiz.length-1){
+current++;
+loadQuestion();
+} else {
+showResult();
+}
+}, 200);
+loadQuestion();
 }
 
 document.getElementById("next").onclick = () => {
-
-if(current < quiz.length-1){
-
-current++;
-
-loadQuestion();
-
+if(quiz[current].type === "open"){
+answersUser[current] = document.getElementById("openAnswer").value;
 }
-
+if(current < quiz.length-1){
+current++;
+loadQuestion();
+} else {
+showResult();
+}
 };
 
 document.getElementById("prev").onclick = () => {
-
 if(current > 0){
-
 current--;
-
 loadQuestion();
-
 }
-
 };
 
-loadQuestion();
+function updateProgress(){
+let percent = ((current+1) / quiz.length) * 100;
+progressBar.style.width = percent + "%";
+}
 
+function showResult(){
+let score = 0;
+
+quiz.forEach((q,i)=>{
+if(q.type === "mc" && answersUser[i] === q.correct){
+score++;
+}
+});
+
+let fouten = 10 - score;
+
+questionBox.innerHTML = `
+<div class="result">
+<h2>Klaar!</h2>
+<p>Je hebt ${fouten} van de 15 fout</p>
+<p>Score: ${score}/10 goed</p>
+</div>`;
+}
+
+loadQuestion();
