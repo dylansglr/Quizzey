@@ -72,7 +72,6 @@ let answersUser = new Array(quiz.length).fill(null);
 const questionBox = document.getElementById("questionBox");
 const progressBar = document.getElementById("progress");
 
-// click lock zodat je 2x niet dubbel telt
 let clickLocked = false;
 
 function loadQuestion(){
@@ -104,12 +103,11 @@ questionBox.innerHTML = html;
 }
 
 function selectAnswer(i){
-if(clickLocked) return; // voorkomt dubbele score
+if(clickLocked) return;
 clickLocked = true;
 
 answersUser[current] = i;
 
-// automatische doorgang bij 2x click
 setTimeout(()=>{
 if(current < quiz.length-1){
 current++;

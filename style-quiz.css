@@ -1,26 +1,24 @@
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: #e6f2e9; /* lichte achtergrond voor contrast */
+    background: #e6f2e9;
     margin: 0;
-    color: #004d1a; /* iets donkerder voor tekst */
+    color: #004d1a;
 }
 
 header {
-    background: #fdfdfd; /* lichte groene header */
+    background: #fdfdfd;
     padding: 15px;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-
 .logo img {
-    height: 50px; /* past bij je eerdere stijl */
+    height: 50px;
 }
-
 
 #Roffa h1 {
     margin: 0;
-    color: #008a2e; /* donkergroen */
+    color: #008a2e;
 }
 
 .quiz-container {
@@ -32,11 +30,10 @@ header {
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-/* progress bar */
 .progress-bar {
     width: 100%;
     height: 12px;
-    background: #cce8d6; /* lichte groene achtergrond */
+    background: #cce8d6;
     border-radius: 10px;
     margin-bottom: 20px;
     overflow: hidden;
@@ -45,7 +42,7 @@ header {
 #progress {
     height: 100%;
     width: 0%;
-    background: #008a2e; /* donkergroen progress */
+    background: #008a2e;
     transition: 0.3s;
 }
 
@@ -100,7 +97,7 @@ textarea {
 }
 
 .navigation button:hover {
-    background: #006622; /* donkerder voor hover */
+    background: #006622;
 }
 
 .result {
